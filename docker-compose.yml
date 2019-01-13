@@ -1,0 +1,55 @@
+version: '3.5'
+
+services:
+    celery_demo:
+        image: sample/celery_demo
+        environment:
+            - APP_ENVIRONMENT=staging
+            - SECRET_KEY_VALUE=bDf%Ma*y8HX6S2zZVMP37bbWc^zLT#jwDTFMP7hZFZvWczeD5@
+            - DEBUG_VALUE=true
+            - ALLOWED_HOSTS_VALUE=*
+            - DATABASE_NAME_VALUE=celery-demo
+            - DATABASE_USER_VALUE=postgres-admin
+            - DATABASE_PASSWORD_VALUE=j*B&72_#AX_wj8*MgY=j!4u=^b?M*Mwtu@%K
+            - DATABASE_HOSTNAME_VALUE=db
+            - DATABASE_PORT_VALUE=5432
+            - CELERY_BROKER_URL_VALUE=amqp://guest:guest@queue:5672//
+            - CELERY_ACCEPT_CONTENT_VALUE=json
+            - CELERY_RESULT_BACKEND_VALUE=db+sqlite:///results.sqlite
+            - CELERY_TASK_SERIALIZER_VALUE=json
+        ports:
+            - 8000:8000
+        restart: unless-stopped
+        depends_on:
+            - db
+        networks:
+            - internal_db
+            - queue
+
+    db:
+        image: postgres:11.1
+        environment:
+            - POSTGRES_USER=postgres-admin
+            - POSTGRES_PASSWORD=j*B&72_#AX_wj8*MgY=j!4u=^b?M*Mwtu@%K
+            - POSTGRES_DB=celery-demo
+        volumes:
+            - db-data:/var/lib/postgresql/data
+        restart: unless-stopped
+        networks:
+            - internal_db
+
+    queue:
+        image: rabbitmq:3.7.8-management
+        ports:
+            - 5672:5672
+            - 15672:15672
+        restart: unless-stopped
+        networks:
+            - queue
+
+volumes:
+    db-data:
+
+networks:
+    internal_db:
+    queue:
