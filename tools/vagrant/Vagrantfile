@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
         app.vm.network "forwarded_port", guest: 80, host: 3080
 
         # Folder setting
-        app.vm.synced_folder "../../", "/app", create: true, owner: 'vagrant', group: 'vagrant', mount_options: ['dmode=750', 'fmode=640'], SharedFoldersEnableSymlinksCreate: true
+        app.vm.synced_folder "../../", "/app", create: true, owner: 'vagrant', group: 'vagrant', mount_options: ['dmode=750', 'fmode=751'], SharedFoldersEnableSymlinksCreate: true
 
         # Provider settings
         app.vm.provider "virtualbox" do |vb|

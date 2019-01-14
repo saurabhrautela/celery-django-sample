@@ -1,4 +1,4 @@
-FROM python:3.7.0-slim-stretch
+FROM python:3.7.2-slim-stretch
 
 LABEL \
 Name=celery_demo \
@@ -21,11 +21,6 @@ COPY ./tools/docker/runserver_entrypoint.sh /app/tools/docker/runserver_entrypoi
 
 COPY ./tools/docker/migration_entrypoint.sh /app/tools/docker/migration_entrypoint.sh
 
-RUN chmod +x /app/tools/docker/runserver_entrypoint.sh \
-&& chmod +x /app/tools/docker/migration_entrypoint.sh
-
 WORKDIR /app/dev/sample
 
 ENTRYPOINT ["/app/tools/docker/runserver_entrypoint.sh"]
-
-EXPOSE 7000
