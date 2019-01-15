@@ -13,7 +13,7 @@ services:
             - DATABASE_PASSWORD_VALUE=j*B&72_#AX_wj8*MgY=j!4u=^b?M*Mwtu@%K
             - DATABASE_HOSTNAME_VALUE=db
             - DATABASE_PORT_VALUE=5432
-            - CELERY_BROKER_URL_VALUE=amqp://guest:guest@192.168.33.30//
+            - CELERY_BROKER_URL_VALUE=amqp://celerydemo:celerydemo@192.168.33.30//
             - CELERY_ACCEPT_CONTENT_VALUE=json;
             - CELERY_RESULT_BACKEND_VALUE=db+sqlite:///results.sqlite
             - CELERY_TASK_SERIALIZER_VALUE=json

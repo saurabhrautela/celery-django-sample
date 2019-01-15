@@ -1,8 +1,9 @@
 version: '3.5'
 
 services:
-    celery_demo:
-        image: sample/celery_demo
+    celery_demo: &celery_demo
+        build: .
+        # image: app_celery_demo
         environment:
             - APP_ENVIRONMENT=staging
             - SECRET_KEY_VALUE=bDf%Ma*y8HX6S2zZVMP37bbWc^zLT#jwDTFMP7hZFZvWczeD5@
@@ -13,7 +14,7 @@ services:
             - DATABASE_PASSWORD_VALUE=j*B&72_#AX_wj8*MgY=j!4u=^b?M*Mwtu@%K
             - DATABASE_HOSTNAME_VALUE=db
             - DATABASE_PORT_VALUE=5432
-            - CELERY_BROKER_URL_VALUE=amqp://guest:guest@queue:5672//
+            - CELERY_BROKER_URL_VALUE=amqp://celerydemo:celerydemo@queue:5672//
             - CELERY_ACCEPT_CONTENT_VALUE=json
             - CELERY_RESULT_BACKEND_VALUE=db+sqlite:///results.sqlite
             - CELERY_TASK_SERIALIZER_VALUE=json
@@ -24,7 +25,7 @@ services:
             - db
         networks:
             - internal_db
-            - queue
+            - internal_async
             - reverse_proxy
 
     db:
@@ -44,26 +45,40 @@ services:
         ports:
             - 5672:5672
             - 15672:15672
+        environment:
+            - RABBITMQ_DEFAULT_USER=celerydemo
+            - RABBITMQ_DEFAULT_PASS=celerydemo
         restart: unless-stopped
         networks:
-            - queue
+            - internal_async
 
     reverseproxy:
         image: nginx:1.15-alpine
         restart: unless-stopped
         ports:
-          - 80:80
-          - 443:443
+            - 80:80
+            - 443:443
         volumes:
-          - ./tools/ssl/:/etc/ssl
-          - ./tools/nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./tools/ssl/:/etc/ssl
+            - ./tools/nginx/nginx.conf:/etc/nginx/nginx.conf
+        depends_on:
+            - celery_demo
         networks:
-          - reverse_proxy
+            - reverse_proxy
+
+    celery_worker:
+        <<: *celery_demo
+        ports: []
+        depends_on:
+            - db
+            - queue
+        entrypoint: /bin/sh -c
+        command: ["celery -A sample worker -l info"]
 
 volumes:
     db-data:
 
 networks:
     internal_db:
-    queue:
+    internal_async:
     reverse_proxy:
