@@ -1,8 +1,9 @@
 version: '3.5'
 
 services:
-    celery_demo:
-        image: sample/celery_demo
+    celery_demo_migration:
+        build: .
+        # image: app_celery_demo
         environment:
             - APP_ENVIRONMENT=staging
             - SECRET_KEY_VALUE=bDf%Ma*y8HX6S2zZVMP37bbWc^zLT#jwDTFMP7hZFZvWczeD5@

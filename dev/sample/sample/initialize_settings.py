@@ -31,10 +31,10 @@ except:
     DATABASE_NAME_VALUE = 'celery-demo'
     DATABASE_USER_VALUE = 'postgres-admin'
     DATABASE_PASSWORD_VALUE = 'password123'
-    DATABASE_HOSTNAME_VALUE = 'localhost'
-    DATABASE_PORT_VALUE = '5432'
+    DATABASE_HOSTNAME_VALUE = '192.168.33.30'
+    DATABASE_PORT_VALUE = '5433'
 
-    CELERY_BROKER_URL_VALUE = 'amqp://celerydemo:celerydemo@192.168.33.30:5672//'
+    CELERY_BROKER_URL_VALUE = 'amqp://guest:guest@192.168.33.30:5673//'
     CELERY_ACCEPT_CONTENT_VALUE = 'json'
     CELERY_RESULT_BACKEND_VALUE = 'db+sqlite:///results.sqlite'
     CELERY_TASK_SERIALIZER_VALUE = 'json'
