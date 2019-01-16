@@ -1,0 +1,27 @@
+version: '3.5'
+
+services:
+    db_dev:
+        image: postgres:11.1
+        ports:
+            - 5433:5432
+        environment:
+            - POSTGRES_USER=postgres-admin
+            - POSTGRES_PASSWORD=password123
+            - POSTGRES_DB=celery-demo
+        volumes:
+            - db-data-dev:/var/lib/postgresql/data
+        restart: unless-stopped
+
+    queue_dev:
+        image: rabbitmq:3.7-management
+        ports:
+            - 5673:5672
+            - 15673:15672
+        environment:
+            - RABBITMQ_DEFAULT_USER=guest
+            - RABBITMQ_DEFAULT_PASS=guest
+        restart: unless-stopped
+
+volumes:
+    db-data-dev:
