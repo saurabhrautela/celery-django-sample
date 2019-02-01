@@ -1,0 +1,43 @@
+version: '3.5'
+
+services:
+    db_dev:
+        image: postgres:11.1
+        hostname: db_dev
+        ports:
+            - 5432:5432
+        environment:
+            - POSTGRES_USER=postgres-admin
+            - POSTGRES_PASSWORD=password123
+            - POSTGRES_DB=celery-demo
+        volumes:
+            - db_data_dev:/var/lib/postgresql/data
+        restart: unless-stopped
+
+    queue_dev:
+        image: rabbitmq:3.7-management
+        hostname: queue_dev
+        ports:
+            - 5672:5672
+            - 15672:15672
+        environment:
+            - RABBITMQ_DEFAULT_USER=guest
+            - RABBITMQ_DEFAULT_PASS=guest
+        volumes:
+            # - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+            # - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+            - queue_data_dev:/var/lib/rabbitmq/mnesia/rabbit@queue
+        restart: unless-stopped
+
+    redis:
+        build: ./redis
+        # image: redis:5.0.3-stretch
+        ports:
+            - 6379:6379
+        volumes:
+            - redis_data_dev:/data
+
+volumes:
+    db_data_dev:
+    queue_data_dev:
+    redis_data_dev:
