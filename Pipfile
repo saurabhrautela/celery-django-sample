@@ -4,15 +4,17 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pylint = "*"
-black = "*"
+pylint = "==2.2.2"
+black = "==18.9b0"
 
 [packages]
-django = "==2.1.4"
-psycopg2 = "*"
+django = "==2.1.5"
+psycopg2 = "==2.7.7"
 celery = "==4.2.1"
-djangorestframework = "==3.9.0"
-gunicorn = "*"
+djangorestframework = "==3.9.1"
+gunicorn = "==19.9.0"
+redis = "==3.1.0"
+flower = "==0.9.2"
 
 [requires]
-python_version = "3.7"
+python_version = "3.6"

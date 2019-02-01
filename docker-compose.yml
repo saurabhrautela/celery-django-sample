@@ -14,9 +14,9 @@ services:
             - DATABASE_PASSWORD_VALUE=j*B&72_#AX_wj8*MgY=j!4u=^b?M*Mwtu@%K
             - DATABASE_HOSTNAME_VALUE=db
             - DATABASE_PORT_VALUE=5432
-            - CELERY_BROKER_URL_VALUE=amqp://celerydemo:celerydemo@queue:5672//
+            - CELERY_BROKER_URL_VALUE=amqp://celerydemo:celerydemo@queue:5672
             - CELERY_ACCEPT_CONTENT_VALUE=json
-            - CELERY_RESULT_BACKEND_VALUE=db+sqlite:///results.sqlite
+            - CELERY_RESULT_BACKEND_VALUE=redis://:rjxxMXBp85nMhfzr28EswVyFVKgEGLMTWSLvatWxTrjBs3WsYT@redis:6379/0
             - CELERY_TASK_SERIALIZER_VALUE=json
         restart: unless-stopped
         depends_on:
@@ -33,16 +33,23 @@ services:
             - POSTGRES_PASSWORD=j*B&72_#AX_wj8*MgY=j!4u=^b?M*Mwtu@%K
             - POSTGRES_DB=celery-demo
         volumes:
-            - db-data:/var/lib/postgresql/data
+            - db_data:/var/lib/postgresql/data
         restart: unless-stopped
         networks:
             - internal_db
 
     queue:
         image: rabbitmq:3.7-management
+        hostname: queue
+        ports:
+            - 15672:15672
         environment:
             - RABBITMQ_DEFAULT_USER=celerydemo
             - RABBITMQ_DEFAULT_PASS=celerydemo
+        volumes:
+            # - ./tools/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.config
+            # - ./tools/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+            - queue_data:/var/lib/rabbitmq/mnesia/rabbit@queue
         restart: unless-stopped
         networks:
             - internal_async
@@ -67,11 +74,33 @@ services:
         depends_on:
             - db
             - queue
+            - redis
         entrypoint: /bin/sh -c
-        command: ["celery -A sample worker -l info"]
+        command: ["celery -A sample worker -Q default -l info"]
+
+    flower_monitor:
+        <<: *celery_demo
+        ports:
+            - 5555:5555
+        depends_on:
+            - db
+            - queue
+            - celery_worker
+        entrypoint: /bin/sh -c
+        command: ["flower -A sample"]
+
+    redis:
+        build: ./tools/redis
+        # image: redis:5.0.3-stretch
+        volumes:
+            - redis_data:/data
+        networks:
+            - internal_db
 
 volumes:
-    db-data:
+    db_data:
+    queue_data:
+    redis_data:
 
 networks:
     internal_db:

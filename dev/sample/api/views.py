@@ -45,7 +45,7 @@ Create an API by extending APIView.
 """
 class NamasteVishwaKaDrishya(APIView):
     def get(self, request):
-        return Response({"message": "Namaste Viwhwa!"}, status=status.HTTP_202_ACCEPTED)
+        return Response({"sandesh": "Namaste Viwhwa!"}, status=status.HTTP_202_ACCEPTED)
 
     def post(self, request):
         naam = request.data.get('naam')
